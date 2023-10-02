@@ -1,8 +1,7 @@
 const express = require('express')
 const jsforce = require('jsforce');
 const app = express()
-const PORT = 3002
-const SERVER_URL = 'http://localhost:3002'
+const {PORT, SERVER_URL, SF_LOGIN_URL, SF_PASSWORD, SF_USERNAME} = require('./src/config')
 
 //create a test api to check if server is running
 app.get('/test', (req, res)=>{
@@ -10,10 +9,10 @@ app.get('/test', (req, res)=>{
 })
 app.get('/connection', (req, res)=>{
     const conn = new jsforce.Connection({
-        loginUrl : 'https://login.salesforce.com'
+        loginUrl : SF_LOGIN_URL
       });
-      const username = 'expensemanager@salesforce.com'
-      const password = 'salesforce@123wIzt7ibx7IAYiOW729zAJDWa' //password+securitytoken
+      const username = SF_USERNAME
+      const password = SF_PASSWORD //password+securitytoken
       conn.login(username, password, function(err, userInfo) {
         if (err) { return console.error(err); }
         // Now you can get the access token and instance URL information.

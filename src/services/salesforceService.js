@@ -16,7 +16,22 @@ const login = (req, res)=>{
 //Callback function to get Salesforce Auth token
 const callback = (req, res)=>{
     const {code} = req.query
+    if(!code){
+        console.log("Failed to get authorization code from server callback")
+        return res.status(500).send("Failed to get authorization code from server callback")
+    }
     console.log("code", code)
+    const conn = new jsforce.Connection({oauth2:oauth2})
+    conn.authorize(code, function(err){
+        if(err){
+            console.error(err);
+            return res.status(500).send(err)
+        }
+        console.log("Access token", conn.accessToken)
+        console.log("refresh token", conn.refreshToken)
+        console.log("Instance url", conn.instanceUrl)
+        res.redirect("https://google.com/")
+    })
 }
 
 module.exports={

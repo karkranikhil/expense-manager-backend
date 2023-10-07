@@ -1,7 +1,7 @@
 const jsforce = require('jsforce')
 const LocalStorage = require('node-localstorage').LocalStorage
 const lcStorage = new LocalStorage('./info')
-const {SF_LOGIN_URL, SF_CLIENT_ID, SF_CLIENT_SECRET, SF_CALLBACK_URL} = require('../config')
+const {SF_LOGIN_URL, SF_CLIENT_ID, SF_CLIENT_SECRET, SF_CALLBACK_URL, APP_URL} = require('../config')
 //Initialize OAuth2 Config
 const oauth2 = new jsforce.OAuth2({
     loginUrl:SF_LOGIN_URL,
@@ -33,7 +33,7 @@ const callback = (req, res)=>{
         // console.log("refresh token", conn.refreshToken)
         // console.log("Instance url", conn.instanceUrl)
         lcStorage.setItem('accessToken', conn.accessToken || '')
-        res.redirect("https://google.com/")
+        res.redirect(APP_URL)
     })
 }
 

@@ -7,5 +7,6 @@ module.exports={
     SF_PASSWORD:process.env.SF_PASSWORD || 'password',
     SF_CLIENT_ID:process.env.SF_CLIENT_ID || '',
     SF_CLIENT_SECRET:process.env.SF_CLIENT_SECRET || '',
-    SF_CALLBACK_URL:process.env.SF_CALLBACK_URL || 'http://localhost:3002/oauth2/callback'
+    SF_CALLBACK_URL:process.env.SF_CALLBACK_URL || 'http://localhost:3002/oauth2/callback',
+    APP_URL:process.env.APP_URL || 'http://localhost:3000'
 }

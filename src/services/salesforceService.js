@@ -59,10 +59,17 @@ const whoAmI =(req, res)=>{
     })
 }
 
+//Function to perform Salesforce logout and clear localstorage
+const logout = (req, res)=>{
+    lcStorage.clear()
+    res.redirect(`${APP_URL}/login`)
+}
+
 //Centralized error handler function
 
 const handleSalesforceError = (error, res)=>{
-    if(error.statusCode === 404 && (error.code === 'NOT_FOUND' || error.errorCode === 'INVALID_SESSION_ID')){
+    console.log("error statusCode", JSON.stringify(error))
+    if(error.errorCode === 'INVALID_SESSION_ID'){
         lcStorage.clear()
         res.status(200).send({})
     } else{
@@ -74,5 +81,6 @@ const handleSalesforceError = (error, res)=>{
 module.exports={
     login, 
     callback,
-    whoAmI
+    whoAmI,
+    logout
 }

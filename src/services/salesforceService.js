@@ -65,6 +65,29 @@ const logout = (req, res)=>{
     res.redirect(`${APP_URL}/login`)
 }
 
+//Function to get Expenses from Salesforce
+const getExpenses = (req, res)=>{
+    let instanceUrl = lcStorage.getItem('instanceUrl')
+    let accessToken = lcStorage.getItem('accessToken')
+    if(!accessToken){
+        return res.status(200).send({})
+    }
+    const conn = new jsforce.Connection({
+        accessToken,
+        instanceUrl
+    })
+    //perform a query to fetch expenses from salesforce
+    conn.query("SELECT Id, Amount__c,Category__c, Date__c, Name, Expense_Name__c, Notes__c FROM Expense__c ORDER BY Date__c DESC ", function(error, result){
+        if(error){
+            handleSalesforceError(error, res)
+            return
+        }
+        console.log("result", result)
+        res.json(result)
+    })
+}
+
+
 //Centralized error handler function
 
 const handleSalesforceError = (error, res)=>{
@@ -82,5 +105,6 @@ module.exports={
     login, 
     callback,
     whoAmI,
-    logout
+    logout,
+    getExpenses
 }

@@ -135,6 +135,28 @@ const updateExpense = (req, res)=>{
     })
 }
 
+//Function to delete an Expense record in Salesforce
+const deleteExpense = (req, res)=>{
+    let instanceUrl = lcStorage.getItem('instanceUrl')
+    let accessToken = lcStorage.getItem('accessToken')
+    if(!accessToken){
+        return res.status(200).send({})
+    }
+    const conn = new jsforce.Connection({
+        accessToken,
+        instanceUrl
+    })
+    const {id} = req.params
+    //perform a query to fetch expenses from salesforce
+    conn.sobject("Expense__c").destroy(id, function(error, result){
+        if(error){
+            handleSalesforceError(error, res)
+            return
+        }
+        console.log("result", result)
+        res.json(result)
+    })
+}
 
 //Centralized error handler function
 
@@ -156,5 +178,6 @@ module.exports={
     logout,
     getExpenses,
     createExpense,
-    updateExpense
+    updateExpense,
+    deleteExpense
 }

@@ -87,6 +87,54 @@ const getExpenses = (req, res)=>{
     })
 }
 
+//Function to create an Expense record inSalesforce
+const createExpense = (req, res)=>{
+    let instanceUrl = lcStorage.getItem('instanceUrl')
+    let accessToken = lcStorage.getItem('accessToken')
+    if(!accessToken){
+        return res.status(200).send({})
+    }
+    const conn = new jsforce.Connection({
+        accessToken,
+        instanceUrl
+    })
+    const {Expense_Name__c, Amount__c, Date__c,Category__c, Notes__c } = req.body
+    //perform a query to fetch expenses from salesforce
+    conn.sobject("Expense__c").create({Expense_Name__c, Amount__c, Date__c,Category__c, Notes__c }, function(error, result){
+        if(error){
+            handleSalesforceError(error, res)
+            return
+        }
+        console.log("result", result)
+        res.json(result)
+    })
+}
+
+
+//Function to update an Expense record in Salesforce
+const updateExpense = (req, res)=>{
+    let instanceUrl = lcStorage.getItem('instanceUrl')
+    let accessToken = lcStorage.getItem('accessToken')
+    if(!accessToken){
+        return res.status(200).send({})
+    }
+    const conn = new jsforce.Connection({
+        accessToken,
+        instanceUrl
+    })
+    const {id} = req.params
+    const {Expense_Name__c, Amount__c, Date__c,Category__c, Notes__c } = req.body
+    //perform a query to fetch expenses from salesforce
+    conn.sobject("Expense__c").update({Id:id, Expense_Name__c, Amount__c, Date__c,Category__c, Notes__c }, function(error, result){
+        if(error){
+            handleSalesforceError(error, res)
+            return
+        }
+        console.log("result", result)
+        res.json(result)
+    })
+}
+
 
 //Centralized error handler function
 
@@ -106,5 +154,7 @@ module.exports={
     callback,
     whoAmI,
     logout,
-    getExpenses
+    getExpenses,
+    createExpense,
+    updateExpense
 }

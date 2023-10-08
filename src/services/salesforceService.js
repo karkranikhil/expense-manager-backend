@@ -33,11 +33,46 @@ const callback = (req, res)=>{
         // console.log("refresh token", conn.refreshToken)
         // console.log("Instance url", conn.instanceUrl)
         lcStorage.setItem('accessToken', conn.accessToken || '')
+        lcStorage.setItem('instanceUrl', conn.instanceUrl || '')
         res.redirect(APP_URL)
     })
 }
 
+//Function to get logged-in user details
+const whoAmI =(req, res)=>{
+    let instanceUrl = lcStorage.getItem('instanceUrl')
+    let accessToken = lcStorage.getItem('accessToken')
+    if(!accessToken){
+        return res.status(200).send({})
+    }
+    const conn = new jsforce.Connection({
+        accessToken,
+        instanceUrl
+    })
+    conn.identity((error,data)=>{
+        if(error){
+            //do error handling
+            handleSalesforceError(error, res)
+            return
+        }
+        res.json(data)
+    })
+}
+
+//Centralized error handler function
+
+const handleSalesforceError = (error, res)=>{
+    if(error.statusCode === 404 && (error.code === 'NOT_FOUND' || error.errorCode === 'INVALID_SESSION_ID')){
+        lcStorage.clear()
+        res.status(200).send({})
+    } else{
+        console.error("Error", error)
+        res.status(500).send(error)
+    }
+}
+
 module.exports={
     login, 
-    callback
+    callback,
+    whoAmI
 }
